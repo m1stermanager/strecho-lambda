@@ -1,6 +1,6 @@
 # strecho-lambda
 
-currently this is just a project for me figuring out a pleasant way to interact w/ amazon echo stuff. There is a fairly annoying and complex schema i need to use so I'm going to try to make a few helpful sub packages that can do really dumb simple stuff and build from there
+currently this is just a project for me figuring out a pleasant way to interact w/ amazon alexa and lambda  stuff. There is a fairly annoying and complex schema i need to use so I'm going to try to make a few helpful sub packages that can do really dumb simple stuff and build from there
 
 ## next steps
 once we have the dumb "hello world" version of everything i want to 
