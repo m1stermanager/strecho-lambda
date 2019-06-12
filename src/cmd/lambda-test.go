@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	lambda.Start(helloWorldHandler)
+	lambda.Start(dummyAlexaHandler)
 
 	fmt.Println("done")
 }
@@ -18,5 +18,5 @@ func helloWorldHandler() (string, error) {
 }
 
 func dummyAlexaHandler(request *echo.Request) (*echo.Response, error) {
-	return nil, nil
+	return echo.NewPlainTextSpeech("hello world"), nil
 }
