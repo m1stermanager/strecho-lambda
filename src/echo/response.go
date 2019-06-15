@@ -3,6 +3,12 @@ package echo
 //Response represents an amazon alexa/echo response.
 //created per https://developer.amazon.com/docs/custom-skills/request-and-response-json-reference.html
 type Response struct {
+	Version  string         `json:"version"`
+	Response SpeechResponse `json:"response"`
+}
+
+//SpeechResponse is the specific part of the response that makes the echo talk
+type SpeechResponse struct {
 	OutputSpeech     OutputSpeech `json:"outputSpeech"`
 	ShouldEndSession bool         `json:"shouldEndSession"`
 }
@@ -23,8 +29,11 @@ func NewPlainTextSpeech(words string) *Response {
 	}
 
 	response := Response{
-		OutputSpeech:     speech,
-		ShouldEndSession: true,
+		Version: "1.00",
+		Response: SpeechResponse{
+			OutputSpeech:     speech,
+			ShouldEndSession: true,
+		},
 	}
 
 	return &response
