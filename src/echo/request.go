@@ -17,6 +17,11 @@ type Context struct {
 type System struct {
 	AccessToken string `json:"apiAccessToken"`
 	Endpoint    string `json:"apiEndpoint"`
+
+	User struct {
+		UserID      string `json:"userId"`
+		AccessToken string `json:"accessToken"`
+	} `json:"user"`
 }
 
 //Slot is the information about 'slot' being matched

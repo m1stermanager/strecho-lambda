@@ -4,6 +4,7 @@ package echo
 type Request struct {
 	Version string  `json:"version"`
 	Session Session `json:"session"`
+	Context Context `json:"context"`
 
 	Request IntentRequest `json:"request"`
 }
