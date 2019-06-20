@@ -8,7 +8,7 @@ Globals:
     Timeout: 5
 
 Resources:
-  Strecho:
+  StrechoFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
       CodeUri: ../../dist/
@@ -20,6 +20,6 @@ Outputs:
   StrechoFunction:
     Description: "First Lambda Function ARN"
     Value: !GetAtt StrechoFunction.Arn
-  HelloWorldFunctionIamRole:
+  StrechoFunctionIamRole:
     Description: "Implicit IAM Role created for strecho function"
     Value: !GetAtt StrechoFunction.Arn
