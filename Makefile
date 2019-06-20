@@ -1,8 +1,8 @@
-OUTPUT=dist/hello-world
+OUTPUT=dist/strecho.out
 PACKAGE=dist/package.yaml
 
 $(OUTPUT):
-	GOOS=linux go build -o $(OUTPUT) src/cmd/lambda-test.go
+	GOOS=linux go build -o $(OUTPUT) src/cmd/strecho.go
 
 $(PACKAGE): $(OUTPUT)
 	sam package --template-file bin/sam/template.yaml --s3-bucket strecho --output-template-file $(PACKAGE)
