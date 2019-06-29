@@ -52,5 +52,15 @@ func generateActivityStatement(athlete *strava.AthleteDetailed, activities []*st
 		activityTypeDistance[activity.Type] += activity.Distance
 	}
 
-	return fmt.Sprintln(athlete.FirstName, ", I'm seeing", len(activities), "activities in the last 24 hours")
+	summaryMessage := ""
+	for activityType, distance := range activityTypeDistance {
+		pastTenseType := activityType.String() //default to activity type string
+		if activityType == strava.ActivityTypes.Run {
+			pastTenseType = "ran"
+		}
+
+		summaryMessage += fmt.Sprintf("%s for %v meters", pastTenseType, distance)
+	}
+
+	return fmt.Sprintf("Looks like %s %s", athlete.FirstName, summaryMessage)
 }

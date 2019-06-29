@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"strecho-lambda/internal/handler"
 	"strecho-lambda/pkg/echo"
 
@@ -15,6 +14,4 @@ func main() {
 		handler := handler.NewGetActivityHandler(token)
 		return handler.Handle()
 	})
-
-	fmt.Println("done")
 }
