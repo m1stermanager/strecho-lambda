@@ -30,7 +30,7 @@ func Test_HandlerHappyPath(t *testing.T) {
 	assert.Nil(t, err)
 	assert.NotNil(t, response)
 
-	expectedSpeech := "Looks like test ran for 5000 meters"
+	expectedSpeech := "Looks like test ran for 3.11 miles"
 	assert.Equal(t, expectedSpeech, *response.Response.OutputSpeech.Text)
 }
 

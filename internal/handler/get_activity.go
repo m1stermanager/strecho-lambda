@@ -2,6 +2,7 @@ package handler
 
 import (
 	"fmt"
+	"math"
 
 	"strecho-lambda/internal/client"
 	"strecho-lambda/pkg/echo"
@@ -59,7 +60,8 @@ func generateActivityStatement(athlete *strava.AthleteDetailed, activities []*st
 			pastTenseType = "ran"
 		}
 
-		summaryMessage += fmt.Sprintf("%s for %v meters", pastTenseType, distance)
+		miles := math.Round((distance*0.0006213712)*100) / 100
+		summaryMessage += fmt.Sprintf("%s for %v miles", pastTenseType, miles)
 	}
 
 	return fmt.Sprintf("Looks like %s %s", athlete.FirstName, summaryMessage)
