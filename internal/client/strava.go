@@ -36,8 +36,8 @@ func (client *StravaClient) GetLast24HoursOfActivity() ([]*strava.ActivitySummar
 	return client.currentAthleteService.
 		ListActivities().
 		PerPage(1).
-		Before(int(beginningOfDay.Unix())).
-		After(int(endOfDay.Unix())).
+		Before(int(endOfDay.Unix())).
+		After(int(beginningOfDay.Unix())).
 		PerPage(10). //if you have more than 10 activities in a day i'm gonna be impressed
 		Page(1).
 		Do()

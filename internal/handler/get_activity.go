@@ -2,26 +2,37 @@ package handler
 
 import (
 	"fmt"
-	"github/m1stermanager/strecho-lambda/src/client"
-	"github/m1stermanager/strecho-lambda/src/echo"
+
+	"strecho-lambda/internal/client"
+	"strecho-lambda/pkg/echo"
 
 	strava "github.com/strava/go.strava"
 )
 
-//GetActivityHandler receives an echo request, processes the last 24 hours worth of
-//activity for the athlete and provides a semi-personalized response
-func GetActivityHandler(request *echo.Request) (*echo.Response, error) {
-	token := request.Context.System.User.AccessToken
-	//todo obviously work this out into the main package and allow the handler to 
-	//receive the interface and not instantiate the type directly
-	stravaClient := client.NewStravaClient(token)
+//NewGetActivityHandler takes in a request and gives you a handler
+func NewGetActivityHandler(token string) *GetActivityHandler {
+	handler := GetActivityHandler{
+		client.NewStravaClient(token),
+	}
 
-	activities, err := stravaClient.GetLast24HoursOfActivity()
+	return &handler
+}
+
+//GetActivityHandler takes a request and pulls the last 24 hours of activity in order to
+//provide a summary to the user.
+type GetActivityHandler struct {
+	stravaClient StravaClient
+}
+
+//Handle receives an echo request, processes the last 24 hours worth of
+//activity for the athlete and provides a semi-personalized response
+func (handler *GetActivityHandler) Handle() (*echo.Response, error) {
+	activities, err := handler.stravaClient.GetLast24HoursOfActivity()
 	if err != nil {
 		return echo.NewPlainTextSpeech("There was an issue talking to strava. Try again later."), err
 	}
 
-	athlete, err := stravaClient.GetAthlete()
+	athlete, err := handler.stravaClient.GetAthlete()
 	if err != nil {
 		return echo.NewPlainTextSpeech("There was an issue talking to strava. Try again later."), err
 	}
