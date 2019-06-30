@@ -21,7 +21,7 @@ func Test_HandlerHappyPath(t *testing.T) {
 	activities := []*strava.ActivitySummary{
 		fakeActivity(strava.ActivityTypes.Run, 5000),
 	}
-	athlete := fakeAthlete("test")
+	athlete := fakeAthlete("test", measurementPreferences.Feet)
 
 	mockStrava.EXPECT().GetAthlete().Return(athlete, nil)
 	mockStrava.EXPECT().GetLast24HoursOfActivity().Return(activities, nil)
@@ -43,9 +43,10 @@ func fakeActivity(activityType strava.ActivityType, meters float64) *strava.Acti
 	return activity
 }
 
-func fakeAthlete(firstName string) *strava.AthleteDetailed {
+func fakeAthlete(firstName string, measurementPreference measurementPreference) *strava.AthleteDetailed {
 	athlete := new(strava.AthleteDetailed)
 	athlete.FirstName = firstName
+	athlete.MeasurementPreference = string(measurementPreference)
 
 	return athlete
 }

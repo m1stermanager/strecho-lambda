@@ -2,7 +2,7 @@ package handler
 
 import (
 	"fmt"
-	"math"
+	"strings"
 
 	"strecho-lambda/internal/client"
 	"strecho-lambda/pkg/echo"
@@ -42,47 +42,18 @@ func (handler *GetActivityHandler) Handle() (*echo.Response, error) {
 	return echo.NewPlainTextSpeech(speech), nil
 }
 
-type aggregateActivityInfo struct {
-	activityCount int
-	meters        float64
-	kudos         int
-}
-
 func generateActivityStatement(athlete *strava.AthleteDetailed, activities []*strava.ActivitySummary) string {
 	if len(activities) == 0 {
 		return "Hmm. I'm not seeing any activity for today"
 	}
 
-	//an accumulator
-	activityTypeDistance := make(map[strava.ActivityType]*aggregateActivityInfo)
-	for _, activity := range activities {
-		agg, exists := activityTypeDistance[activity.Type]
-		if !exists {
-			agg = new(aggregateActivityInfo)
-			activityTypeDistance[activity.Type] = agg
-		}
-		agg.activityCount++
-		agg.kudos += activity.KudosCount
-		agg.meters += activity.Distance
-	}
+	aggregated := aggregateActivities(activities)
 
 	summaryMessage := ""
-	for activityType, distance := range activityTypeDistance {
-		pastTenseType := activityType.String() //default to activity type string
-		if activityType == strava.ActivityTypes.Run {
-			if distance.activityCount > 1 {
-				pastTenseType = "runs"
-			} else {
-				pastTenseType = "run"
-			}
-		}
-
-		miles := math.Round((distance.meters*0.0006213712)*100) / 100
-		summaryMessage += fmt.Sprintf("has %v %s for %v miles", distance.activityCount, pastTenseType, miles)
-		if distance.kudos > 0 {
-			summaryMessage += fmt.Sprintf(" and has received %v kudos", distance.kudos)
-		}
+	for _, activity := range aggregated {
+		summaryMessage += fmt.Sprintf("%s, ", activity.Summary(measurementPreference(athlete.MeasurementPreference)))
 	}
+	summaryMessage = strings.Trim(strings.TrimSpace(summaryMessage), ",")
 
-	return fmt.Sprintf("Looks like %s %s", athlete.FirstName, summaryMessage)
+	return fmt.Sprintf("Looks like %s has %s", athlete.FirstName, summaryMessage)
 }
