@@ -20,6 +20,8 @@ func Test_HandlerHappyPath(t *testing.T) {
 
 	activities := []*strava.ActivitySummary{
 		fakeActivity(strava.ActivityTypes.Run, 5000),
+		fakeActivity(strava.ActivityTypes.Ride, 5000),
+		fakeActivity(strava.ActivityTypes.Swim, 1000),
 	}
 	athlete := fakeAthlete("test", measurementPreferences.Feet)
 
@@ -30,7 +32,10 @@ func Test_HandlerHappyPath(t *testing.T) {
 	assert.Nil(t, err)
 	assert.NotNil(t, response)
 
-	expectedSpeech := "Looks like test has 1 run for 3.11 miles"
+	expectedSpeech := "Looks like test has 1 run for 3.11 miles, " +
+		"1 ride for 3.11 miles, " +
+		"1 swim for 1000 meters"
+
 	assert.Equal(t, expectedSpeech, *response.Response.OutputSpeech.Text)
 }
 

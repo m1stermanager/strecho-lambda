@@ -51,7 +51,9 @@ func generateActivityStatement(athlete *strava.AthleteDetailed, activities []*st
 
 	summaryMessage := ""
 	for _, activity := range aggregated {
-		summaryMessage += fmt.Sprintf("%s, ", activity.Summary(measurementPreference(athlete.MeasurementPreference)))
+		summaryMessage += fmt.Sprintf("%s, ", activity.Summary(
+			measurementPreference(athlete.MeasurementPreference)),
+		)
 	}
 	summaryMessage = strings.Trim(strings.TrimSpace(summaryMessage), ",")
 

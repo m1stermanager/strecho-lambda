@@ -73,7 +73,7 @@ func (swim *swimmingInfo) Summary(measurementPreference) string {
 	}
 
 	var roundedMeters = math.Round(swim.meters*100) / 100
-	summaryMessage += fmt.Sprintf("%v %s for %v kilometers", swim.activityCount, activityNoun, roundedMeters)
+	summaryMessage += fmt.Sprintf("%v %s for %v meters", swim.activityCount, activityNoun, roundedMeters)
 
 	if swim.kudos > 0 {
 		summaryMessage += fmt.Sprintf("and has received %v kudos", swim.kudos)
