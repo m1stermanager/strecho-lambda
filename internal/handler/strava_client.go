@@ -18,4 +18,4 @@ type measurementPreference string
 var measurementPreferences = struct {
 	Imperial measurementPreference
 	Metric   measurementPreference
-}{"Feet", "Meters"}
+}{"feet", "meters"}
