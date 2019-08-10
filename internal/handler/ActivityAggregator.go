@@ -8,37 +8,32 @@ type aggregatedActivityInfo struct {
 	kudos         int
 	commentCount  int
 
-	activityAttributes activityAttributes
+	activityAttributes activityAttrs
 }
 
 func summarizeActivities(activities []*strava.ActivitySummary) []activitySummary {
 	activityTypeMap := make(map[strava.ActivityType]*aggregatedActivityInfo)
+	summaries := make([]activitySummary, 0)
 
 	for _, activity := range activities {
+		attrs, exists := activityAttrMap[activity.Type]
+		if !exists {
+			//we don't support this activity type.... but we also don't want to explode
+			continue
+		}
+
 		agg, exists := activityTypeMap[activity.Type]
 		if !exists {
-			agg = new(aggregatedActivityInfo)
+			freshAggregation := aggregatedActivityInfo{activityAttributes: *attrs}
+			agg = &freshAggregation
 			activityTypeMap[activity.Type] = agg
+			summaries = append(summaries, agg)
 		}
 
 		agg.activityCount++
 		agg.kudos += activity.KudosCount
 		agg.meters += activity.Distance
 		agg.commentCount += activity.CommentCount
-	}
-
-	summaries := make([]activitySummary, 0)
-	for activityType, activity := range activityTypeMap {
-		switch activityType {
-		case strava.ActivityTypes.Run:
-			activity.activityAttributes = &runningAttributes{}
-		case strava.ActivityTypes.Ride:
-			activity.activityAttributes = &bikingAttributes{}
-		case strava.ActivityTypes.Swim:
-			activity.activityAttributes = &swimmingAttrbutes{}
-		}
-
-		summaries = append(summaries, activity)
 	}
 
 	return summaries

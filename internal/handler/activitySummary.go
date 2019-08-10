@@ -15,16 +15,16 @@ type swimmingAttrbutes struct{}
 func (aggInfo *aggregatedActivityInfo) Summarize(measurementPreference measurementPreference) (string, error) {
 	summaryMessage := ""
 
-	activityNoun := aggInfo.activityAttributes.singular()
+	activityNoun := aggInfo.activityAttributes.singular
 	if aggInfo.activityCount > 1 {
-		activityNoun = aggInfo.activityAttributes.plural()
+		activityNoun = aggInfo.activityAttributes.plural
 	}
 
 	unitOfMeasurement := meters
 	if measurementPreference == measurementPreferences.Imperial {
-		unitOfMeasurement = aggInfo.activityAttributes.imperialEquivalent()
+		unitOfMeasurement = aggInfo.activityAttributes.imperialMeasure
 	} else {
-		unitOfMeasurement = aggInfo.activityAttributes.metricEquivalent()
+		unitOfMeasurement = aggInfo.activityAttributes.metricMeasure
 	}
 
 	convertedUnits, err := convertFromMeters(aggInfo.meters, unitOfMeasurement)
