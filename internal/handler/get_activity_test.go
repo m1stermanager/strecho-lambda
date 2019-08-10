@@ -23,7 +23,7 @@ func Test_HandlerHappyPath(t *testing.T) {
 		fakeActivity(strava.ActivityTypes.Ride, 5000),
 		fakeActivity(strava.ActivityTypes.Swim, 1000),
 	}
-	athlete := fakeAthlete("test", measurementPreferences.Feet)
+	athlete := fakeAthlete("test", measurementPreferences.Imperial)
 
 	mockStrava.EXPECT().GetAthlete().Return(athlete, nil)
 	mockStrava.EXPECT().GetLast24HoursOfActivity().Return(activities, nil)

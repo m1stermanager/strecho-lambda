@@ -2,82 +2,104 @@ package handler
 
 import (
 	"fmt"
-	"math"
 )
 
 type measurementPreference string
 
+//strava shows this preference as feet/meters....
+//here we're just translating it to make *maybe*
+//more sense generically
 var measurementPreferences = struct {
-	Feet   measurementPreference
-	Meters measurementPreference
+	Imperial measurementPreference
+	Metric   measurementPreference
 }{"Feet", "Meters"}
 
 type activitySummary interface {
-	Summary(measurementPreference) string
+	singular() string
+	plural() string
+	metricEquivalent() unitOfMeasurement
+	imperialEquivalent() unitOfMeasurement
+
+	Summarize(measurementPreference) (string, error)
 }
 
-type runningInfo aggregatedActivityInfo
-type bikingInfo aggregatedActivityInfo
-type swimmingInfo aggregatedActivityInfo
+type runningInfo struct{ aggregatedActivityInfo }
+type bikingInfo struct{ aggregatedActivityInfo }
+type swimmingInfo struct{ aggregatedActivityInfo }
 
-func (run *runningInfo) Summary(measurementPreference measurementPreference) string {
+func (*runningInfo) singular() string {
+	return "run"
+}
+
+func (*runningInfo) plural() string {
+	return "runs"
+}
+
+func (*runningInfo) metricEquivalent() unitOfMeasurement {
+	return kilometers
+}
+
+func (*runningInfo) imperialEquivalent() unitOfMeasurement {
+	return miles
+}
+
+func (*bikingInfo) singular() string {
+	return "ride"
+}
+
+func (*bikingInfo) plural() string {
+	return "rides"
+}
+
+func (*bikingInfo) metricEquivalent() unitOfMeasurement {
+	return kilometers
+}
+
+func (*bikingInfo) imperialEquivalent() unitOfMeasurement {
+	return miles
+}
+
+func (*swimmingInfo) singular() string {
+	return "swim"
+}
+
+func (*swimmingInfo) plural() string {
+	return "swims"
+}
+
+func (*swimmingInfo) metricEquivalent() unitOfMeasurement {
+	return meters
+}
+
+func (*swimmingInfo) imperialEquivalent() unitOfMeasurement {
+	return yards
+}
+
+func (aggInfo *aggregatedActivityInfo) Summarize(measurementPreference measurementPreference) (string, error) {
 	summaryMessage := ""
 
-	activityNoun := "run"
-	if run.activityCount > 1 {
-		activityNoun = "runs"
+	activityNoun := aggInfo.summaryType.singular()
+	if aggInfo.activityCount > 1 {
+		activityNoun = aggInfo.summaryType.plural()
 	}
 
-	if measurementPreference == measurementPreferences.Feet {
-		miles := math.Round((run.meters*0.0006213712)*100) / 100
-		summaryMessage += fmt.Sprintf("%v %s for %v miles", run.activityCount, activityNoun, miles)
+	unitOfMeasurement := meters
+	if measurementPreference == measurementPreferences.Imperial {
+		unitOfMeasurement = aggInfo.summaryType.imperialEquivalent()
 	} else {
-		kilometers := math.Round((run.meters/1000)*100) / 100
-		summaryMessage += fmt.Sprintf("%v %s for %v kilometers", run.activityCount, activityNoun, kilometers)
+		unitOfMeasurement = aggInfo.summaryType.metricEquivalent()
 	}
 
-	if run.kudos > 0 {
-		summaryMessage += fmt.Sprintf("and has received %v kudos", run.kudos)
+	convertedUnits, err := convertFromMeters(aggInfo.meters, unitOfMeasurement)
+	if err != nil {
+		return "", err
 	}
 
-	return summaryMessage
-}
+	summaryMessage += fmt.Sprintf("%v %s for %v %s", aggInfo.activityCount, activityNoun, convertedUnits, unitOfMeasurement)
 
-func (bike *bikingInfo) Summary(measurementPreference measurementPreference) string {
-	summaryMessage := ""
-	activityNoun := "ride"
-	if bike.activityCount > 1 {
-		activityNoun = "rides"
+	if aggInfo.kudos > 0 {
+		summaryMessage += fmt.Sprintf("and has received %v kudos", aggInfo.kudos)
 	}
 
-	if measurementPreference == measurementPreferences.Feet {
-		miles := math.Round((bike.meters*0.0006213712)*100) / 100
-		summaryMessage += fmt.Sprintf("%v %s for %v miles", bike.activityCount, activityNoun, miles)
-	} else {
-		kilometers := math.Round((bike.meters*1000)*100) / 100
-		summaryMessage += fmt.Sprintf("%v %s for %v kilometers", bike.activityCount, activityNoun, kilometers)
-	}
-
-	if bike.kudos > 0 {
-		summaryMessage += fmt.Sprintf("and has received %v kudos", bike.kudos)
-	}
-
-	return summaryMessage
-}
-
-func (swim *swimmingInfo) Summary(measurementPreference) string {
-	summaryMessage := ""
-	activityNoun := "swim"
-	if swim.activityCount > 1 {
-		activityNoun = "swims"
-	}
-
-	var roundedMeters = math.Round(swim.meters*100) / 100
-	summaryMessage += fmt.Sprintf("%v %s for %v meters", swim.activityCount, activityNoun, roundedMeters)
-
-	if swim.kudos > 0 {
-		summaryMessage += fmt.Sprintf("and has received %v kudos", swim.kudos)
-	}
-
-	return summaryMessage
+	return summaryMessage, nil
 }

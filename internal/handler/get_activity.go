@@ -38,24 +38,31 @@ func (handler *GetActivityHandler) Handle() (*echo.Response, error) {
 		return echo.NewPlainTextSpeech("There was an issue talking to strava. Try again later."), err
 	}
 
-	speech := generateActivityStatement(athlete, activities)
+	speech, err := generateActivityStatement(athlete, activities)
+	if err != nil {
+		return echo.NewPlainTextSpeech("I couldn't process your activities. Try again later."), err
+	}
+
 	return echo.NewPlainTextSpeech(speech), nil
 }
 
-func generateActivityStatement(athlete *strava.AthleteDetailed, activities []*strava.ActivitySummary) string {
+func generateActivityStatement(athlete *strava.AthleteDetailed, activities []*strava.ActivitySummary) (string, error) {
 	if len(activities) == 0 {
-		return "Hmm. I'm not seeing any activity for today"
+		return "Hmm. I'm not seeing any activity for today", nil
 	}
 
 	aggregated := aggregateActivities(activities)
 
 	summaryMessage := ""
 	for _, activity := range aggregated {
-		summaryMessage += fmt.Sprintf("%s, ", activity.Summary(
-			measurementPreference(athlete.MeasurementPreference)),
-		)
+		summary, err := activity.Summarize(measurementPreference(athlete.MeasurementPreference))
+		if err != nil {
+			return "", err
+		}
+
+		summaryMessage += fmt.Sprintf("%s, ", summary)
 	}
 	summaryMessage = strings.Trim(strings.TrimSpace(summaryMessage), ",")
 
-	return fmt.Sprintf("Looks like %s has %s", athlete.FirstName, summaryMessage)
+	return fmt.Sprintf("Looks like %s has %s", athlete.FirstName, summaryMessage), nil
 }
