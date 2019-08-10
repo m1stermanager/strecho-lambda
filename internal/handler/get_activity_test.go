@@ -34,7 +34,7 @@ func Test_HandlerHappyPath(t *testing.T) {
 
 	expectedSpeech := "Looks like test has 1 run for 3.11 miles, " +
 		"1 ride for 3.11 miles, " +
-		"1 swim for 1000 meters"
+		"1 swim for 1093.61 yards"
 
 	assert.Equal(t, expectedSpeech, *response.Response.OutputSpeech.Text)
 }

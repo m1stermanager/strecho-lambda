@@ -8,10 +8,10 @@ type aggregatedActivityInfo struct {
 	kudos         int
 	commentCount  int
 
-	summaryType activitySummary
+	activityAttributes activityAttributes
 }
 
-func aggregateActivities(activities []*strava.ActivitySummary) []activitySummary {
+func summarizeActivities(activities []*strava.ActivitySummary) []activitySummary {
 	activityTypeMap := make(map[strava.ActivityType]*aggregatedActivityInfo)
 
 	for _, activity := range activities {
@@ -31,15 +31,14 @@ func aggregateActivities(activities []*strava.ActivitySummary) []activitySummary
 	for activityType, activity := range activityTypeMap {
 		switch activityType {
 		case strava.ActivityTypes.Run:
-			run := runningInfo{*activity}
-			summaries = append(summaries, &run)
+			activity.activityAttributes = &runningAttributes{}
 		case strava.ActivityTypes.Ride:
-			ride := bikingInfo{*activity}
-			summaries = append(summaries, &ride)
+			activity.activityAttributes = &bikingAttributes{}
 		case strava.ActivityTypes.Swim:
-			swim := swimmingInfo{*activity}
-			summaries = append(summaries, &swim)
+			activity.activityAttributes = &swimmingAttrbutes{}
 		}
+
+		summaries = append(summaries, activity)
 	}
 
 	return summaries

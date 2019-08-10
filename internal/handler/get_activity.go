@@ -51,7 +51,7 @@ func generateActivityStatement(athlete *strava.AthleteDetailed, activities []*st
 		return "Hmm. I'm not seeing any activity for today", nil
 	}
 
-	aggregated := aggregateActivities(activities)
+	aggregated := summarizeActivities(activities)
 
 	summaryMessage := ""
 	for _, activity := range aggregated {

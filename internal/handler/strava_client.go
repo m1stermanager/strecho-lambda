@@ -9,3 +9,13 @@ type StravaClient interface {
 	GetAthlete() (*strava.AthleteDetailed, error)
 	GetLast24HoursOfActivity() ([]*strava.ActivitySummary, error)
 }
+
+type measurementPreference string
+
+//strava shows this preference as feet/meters....
+//here we're just translating it to make *maybe*
+//more sense generically
+var measurementPreferences = struct {
+	Imperial measurementPreference
+	Metric   measurementPreference
+}{"Feet", "Meters"}
