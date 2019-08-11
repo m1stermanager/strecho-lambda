@@ -7,10 +7,18 @@ import (
 	"github.com/aws/aws-lambda-go/lambda"
 )
 
+var router echo.Router
+
+func init() {
+	handlers := map[string]echo.Handler{
+		"Activity_Today_Summary": handler.NewGetActivityHandler(),
+	}
+
+	router = echo.NewRouter(handlers)
+}
+
 func main() {
-	//todo: routing based on the selected intent etc
 	lambda.Start(func(request *echo.Request) (*echo.Response, error) {
-		handler := handler.NewGetActivityHandler(request)
-		return handler.Handle()
+		return router.Execute(request)
 	})
 }
