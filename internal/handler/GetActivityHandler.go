@@ -11,9 +11,9 @@ import (
 )
 
 //NewGetActivityHandler takes in a request and gives you a handler
-func NewGetActivityHandler(token string) *GetActivityHandler {
+func NewGetActivityHandler(request *echo.Request) *GetActivityHandler {
 	handler := GetActivityHandler{
-		client.NewStravaClient(token),
+		client.NewStravaClient(request.Context.System.User.AccessToken),
 	}
 
 	return &handler
@@ -23,6 +23,10 @@ func NewGetActivityHandler(token string) *GetActivityHandler {
 //provide a summary to the user.
 type GetActivityHandler struct {
 	stravaClient StravaClient
+}
+
+type activitySummary interface {
+	Summarize(measurementPreference) (string, error)
 }
 
 //Handle receives an echo request, processes the last 24 hours worth of
