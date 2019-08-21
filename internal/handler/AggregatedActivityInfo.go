@@ -39,7 +39,7 @@ func (aggInfo *aggregatedActivityInfo) Summarize(measurementPreference measureme
 	summaryMessage += fmt.Sprintf("%v %s for %v %s", aggInfo.activityCount, activityNoun, convertedUnits, unitOfMeasurement)
 
 	if aggInfo.kudos > 0 {
-		summaryMessage += fmt.Sprintf("and has received %v kudos", aggInfo.kudos)
+		summaryMessage += fmt.Sprintf(" and has received %v kudos", aggInfo.kudos)
 	}
 
 	return summaryMessage, nil
