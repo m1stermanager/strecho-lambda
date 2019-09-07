@@ -6,7 +6,7 @@ import (
 )
 
 var (
-	unknownUnitError = fmt.Errorf("unknown unit of measure provided")
+	errUnknownUnitError = fmt.Errorf("unknown unit of measure provided")
 )
 
 type unitOfMeasurement int
@@ -51,7 +51,7 @@ func convertFromMeters(m float64, convertTo unitOfMeasurement) (float64, error) 
 	case miles:
 		converted = (m * 3.28084) / 5280
 	default:
-		return 0, unknownUnitError
+		return 0, errUnknownUnitError
 	}
 
 	rounded := math.Round(converted*100) / 100

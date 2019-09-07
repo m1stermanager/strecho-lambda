@@ -17,7 +17,7 @@ var meterConversionTests = []struct {
 	{5000, kilometers, 5, nil},
 	{5000, feet, 16404.2, nil},
 	{5000, yards, 5468.07, nil},
-	{5000, unitOfMeasurement(-100), 0, unknownUnitError},
+	{5000, unitOfMeasurement(-100), 0, errUnknownUnitError},
 }
 
 func Test_ConvertFromMeters(t *testing.T) {
