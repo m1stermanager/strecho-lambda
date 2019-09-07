@@ -11,12 +11,14 @@ import (
 )
 
 //NewGetActivityHandler takes in a request and gives you a handler
-func NewGetActivityHandler(request *echo.Request) *GetActivityHandler {
-	handler := GetActivityHandler{
-		client.NewStravaClient(request.Context.System.User.AccessToken),
-	}
+func NewGetActivityHandler() echo.Handler {
+	return func(request *echo.Request) (*echo.Response, error) {
+		handler := GetActivityHandler{
+			client.NewStravaClient(request.Context.System.User.AccessToken),
+		}
 
-	return &handler
+		return handler.Handle()
+	}
 }
 
 //GetActivityHandler takes a request and pulls the last 24 hours of activity in order to
